@@ -99,7 +99,7 @@
   }
 
   // Paint a squared gradient
-  function paint(keyCode) {
+  function paintGradient(keyCode) {
     context.beginPath();
     var grd = context.createLinearGradient(i, 0, i+size, 0);
     grd.addColorStop(0, colors[keyCode][0]);
@@ -108,7 +108,13 @@
     context.fillRect(i, size*j, size, size);
   }
 
-  window.addEventListener('keydown', function(e) {
+  // Add a new character to the text content div
+  function addChar(charCode) {
+    $textContent.get(0).innerText += String.fromCharCode(charCode);
+  }
+
+  // Handle keydown events for colors mode
+  $(window).on('keydown', function(e) {
 
     // Don't move scroll when enter key is pressed
     if (e.keyCode === 32) {
@@ -118,12 +124,19 @@
     }
 
     // Paint a color
-    paint(e.keyCode + '');
+    paintGradient(e.keyCode + '');
     i += size;
 
     if (i >= $canvas[0].width) {
       j++;
       i = 0;
+    }
+  });
+
+  // The correct lowercase or uppercase value is returned for keypress events
+  $(window).on('keypress', function(e) {
+    if (enabledMode === COLORS) {
+      addChar(e.which);
     }
   });
 
