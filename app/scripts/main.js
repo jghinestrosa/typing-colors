@@ -3,6 +3,7 @@
   var colors = {};
   var $canvas = $('canvas');
   var context = $canvas[0].getContext('2d');
+  var $textContent = $('#text-content');
 
   // Parent elements
   var elements = [$('html'), $('body'), $canvas];
@@ -84,10 +85,15 @@
   function setMode(mode) {
     if (mode === TEXT) {
       $textButton.removeClass('invisible');
+      $canvas.addClass('invisible');
+      $textContent.removeClass('invisible');
+      $textContent.focus();
       enabledMode = TEXT;
     }
     else {
       $textButton.addClass('invisible');
+      $canvas.removeClass('invisible');
+      $textContent.addClass('invisible');
       enabledMode = COLORS;
     }
   }

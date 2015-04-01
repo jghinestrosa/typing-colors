@@ -1,4 +1,6 @@
-html, body, canvas {
+html, body, canvas, #text-content {
+  width: 100%;
+  height: 100%;
   padding: 0;
   margin: 0;
 }
@@ -41,7 +43,7 @@ html, body, canvas {
 }
 
 .invisible {
-  visibility: hidden;
+  display: none;
 }
 
 .change-to-colors {
