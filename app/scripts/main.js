@@ -18,6 +18,12 @@
   var width = $(window).width();
   var height = $(window).height();
 
+  var COLORS = 0;
+  var TEXT = 1;
+  var $toggleButton = $('#toggle');
+  var $textButton = $('#change-to-text');
+  var enabledMode = COLORS;
+
   // First row
   colors['81'] = ['#ff6b00', '#ffea00'];
   colors['87'] = ['#ffea00', '#bbff00'];
@@ -63,6 +69,28 @@
      $element.css('height', height + 'px');
   });
 
+
+  $toggleButton.on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (enabledMode === TEXT) {
+      setMode(COLORS);
+    }
+    else {
+      setMode(TEXT);
+    }
+  });
+
+  function setMode(mode) {
+    if (mode === TEXT) {
+      $textButton.removeClass('invisible');
+      enabledMode = TEXT;
+    }
+    else {
+      $textButton.addClass('invisible');
+      enabledMode = COLORS;
+    }
+  }
 
   // Paint a squared gradient
   function paint(keyCode) {
