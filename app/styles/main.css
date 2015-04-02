@@ -5,6 +5,10 @@ html, body, canvas, #text-content {
   margin: 0;
 }
 
+#text-content {
+  outline: 0px solid transparent;
+}
+
 #toggle {
   position: absolute;
   right: 0;
