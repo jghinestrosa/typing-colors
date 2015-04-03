@@ -72,14 +72,17 @@
 
 
   $toggleButton.on('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
     if (enabledMode === TEXT) {
       setMode(COLORS);
     }
     else {
       setMode(TEXT);
     }
+  });
+
+  // Avoid selecting content
+  $toggleButton.on('mousedown', function(e) {
+    e.preventDefault();
   });
 
   function setMode(mode) {
