@@ -84,14 +84,14 @@
 
   function setMode(mode) {
     if (mode === TEXT) {
-      $textButton.removeClass('invisible');
+      $textButton.addClass('invisible');
       $canvas.addClass('invisible');
       $textContent.removeClass('invisible');
       $textContent.focus();
       enabledMode = TEXT;
     }
     else {
-      $textButton.addClass('invisible');
+      $textButton.removeClass('invisible');
       $canvas.removeClass('invisible');
       $textContent.addClass('invisible');
       enabledMode = COLORS;
