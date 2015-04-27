@@ -1,146 +1,269 @@
-(function(window, document, $) {
+var TypingColors = (function($) {
+  'use strict';
 
-  var colors = {};
-  var $canvas = $('canvas');
-  var context = $canvas[0].getContext('2d');
-  var $textContent = $('#text-content');
+  // Elements to show colors and text
+  var $canvas;
+  var context;
+  var $textContent;
 
-  // Parent elements
-  var elements = [$('html'), $('body'), $canvas];
+  // Buttons
+  var $toggleModeButton;
+  var $textButton;
 
-  // Indexes for canvas position of painting
+  // Canvas position indexes for painting
   var i = 0;
   var j = 0;
 
   // Size of the square to be painted
-  var size = 40;
+  var squareSize = 40;
 
-  // Width and height of the initial window
-  var width = $(window).width();
-  var height = $(window).height();
+  // Canvas width and height
+  var canvasWidth;
+  var canvasHeight;
 
+  // Map to store the custom color for each key
+  var colors = {};
+
+  // Map to store the gradient default color for each key
+  var gradientColors = {};
+
+  // Available modes
   var COLORS = 0;
   var TEXT = 1;
-  var $toggleButton = $('#toggle');
-  var $textButton = $('#change-to-text');
+
   var enabledMode = COLORS;
 
-  // First row
-  colors['81'] = ['#ff6b00', '#ffea00'];
-  colors['87'] = ['#ffea00', '#bbff00'];
-  colors['69'] = ['#bbff00', '#39ff00'];
-  colors['82'] = ['#39ff00', '#00ff1a'];
-  colors['84'] = ['#00ff1a', '#00ff8e'];
-  colors['89'] = ['#00ff8e', '#00fff6'];
-  colors['85'] = ['#00fff6', '#00a4ff'];
-  colors['73'] = ['#00a4ff', '#001fff'];
-  colors['79'] = ['#001fff', '#3400ff'];
-  colors['80'] = ['#3400ff', '#b100ff'];
+  function setDefaultGradientColors() {
+    
+    // First keyboard row
+    gradientColors['81'] = ['#ff6b00', '#ffea00'];
+    gradientColors['87'] = ['#ffea00', '#bbff00'];
+    gradientColors['69'] = ['#bbff00', '#39ff00'];
+    gradientColors['82'] = ['#39ff00', '#00ff1a'];
+    gradientColors['84'] = ['#00ff1a', '#00ff8e'];
+    gradientColors['89'] = ['#00ff8e', '#00fff6'];
+    gradientColors['85'] = ['#00fff6', '#00a4ff'];
+    gradientColors['73'] = ['#00a4ff', '#001fff'];
+    gradientColors['79'] = ['#001fff', '#3400ff'];
+    gradientColors['80'] = ['#3400ff', '#b100ff'];
 
-  // Second row
-  colors['65'] = ['#ff8a00', '#fffa00'];
-  colors['83'] = ['#fffa00', '#a2ff00'];
-  colors['68'] = ['#a2ff00', '#24ff00'];
-  colors['70'] = ['#24ff00', '#00ff2d'];
-  colors['71'] = ['#00ff2d', '#00ffa3'];
-  colors['72'] = ['#00ffa3', '#00fbff'];
-  colors['74'] = ['#00fbff', '#0086ff'];
-  colors['75'] = ['#0086ff', '#000cff'];
-  colors['76'] = ['#000cff', '#4b00ff'];
+    // Second keyboard row
+    gradientColors['65'] = ['#ff8a00', '#fffa00'];
+    gradientColors['83'] = ['#fffa00', '#a2ff00'];
+    gradientColors['68'] = ['#a2ff00', '#24ff00'];
+    gradientColors['70'] = ['#24ff00', '#00ff2d'];
+    gradientColors['71'] = ['#00ff2d', '#00ffa3'];
+    gradientColors['72'] = ['#00ffa3', '#00fbff'];
+    gradientColors['74'] = ['#00fbff', '#0086ff'];
+    gradientColors['75'] = ['#0086ff', '#000cff'];
+    gradientColors['76'] = ['#000cff', '#4b00ff'];
 
-  // Third row
-  colors['90'] = ['#ffd000', '#dcff00'];
-  colors['88'] = ['#dcff00', '#5fff00'];
-  colors['67'] = ['#5fff00', '#00ff05'];
-  colors['86'] = ['#00ff05', '#00ff69'];
-  colors['66'] = ['#00ff69', '#00ffe1'];
-  colors['78'] = ['#00ffe1', '#00c7ff'];
-  colors['77'] = ['#00c7ff', '#003fff'];
-  colors['188'] = ['#003fff', '#1800ff'];
-  colors['190'] = ['#1800ff', '#8d00ff'];
+    // Third keyboard row
+    gradientColors['90'] = ['#ffd000', '#dcff00'];
+    gradientColors['88'] = ['#dcff00', '#5fff00'];
+    gradientColors['67'] = ['#5fff00', '#00ff05'];
+    gradientColors['86'] = ['#00ff05', '#00ff69'];
+    gradientColors['66'] = ['#00ff69', '#00ffe1'];
+    gradientColors['78'] = ['#00ffe1', '#00c7ff'];
+    gradientColors['77'] = ['#00c7ff', '#003fff'];
+    gradientColors['188'] = ['#003fff', '#1800ff'];
+    gradientColors['190'] = ['#1800ff', '#8d00ff'];
 
-  // Enter
-  colors['32'] = ['#5fff00', '#003fff'];
-
-  // Initialize parent elements size
-  $canvas[0].width = width;
-  $canvas[0].height = height;
-  elements.forEach(function($element) {
-     $element.css('width', width + 'px');
-     $element.css('height', height + 'px');
-  });
-
-
-  $toggleButton.on('click', function(e) {
-    if (enabledMode === TEXT) {
-      setMode(COLORS);
-    }
-    else {
-      setMode(TEXT);
-    }
-  });
-
-  // Avoid selecting content
-  $toggleButton.on('mousedown', function(e) {
-    e.preventDefault();
-  });
-
-  function setMode(mode) {
-    if (mode === TEXT) {
-      $textButton.addClass('invisible');
-      $canvas.addClass('invisible');
-      $textContent.removeClass('invisible');
-      $textContent.focus();
-      enabledMode = TEXT;
-    }
-    else {
-      $textButton.removeClass('invisible');
-      $canvas.removeClass('invisible');
-      $textContent.addClass('invisible');
-      enabledMode = COLORS;
-    }
+    // Enter key
+    gradientColors['32'] = ['#5fff00', '#003fff'];
   }
 
-  // Paint a squared gradient
-  function paintGradient(keyCode) {
-    context.beginPath();
-    var grd = context.createLinearGradient(i, 0, i+size, 0);
-    grd.addColorStop(0, colors[keyCode][0]);
-    grd.addColorStop(1, colors[keyCode][1]);
-    context.fillStyle = grd;
-    context.fillRect(i, size*j, size, size);
-  }
+  setDefaultGradientColors();
 
-  // Add a new character to the text content div
-  function addChar(charCode) {
-    $textContent.get(0).innerText += String.fromCharCode(charCode);
-  }
+  return {
+    setCanvas: function(canvas) {
+      $canvas = $(canvas);
+      context = $canvas[0].getContext('2d');
+    },
 
-  // Handle keydown events for colors mode
-  $(window).on('keydown', function(e) {
+    setTextContent: function(textContent) {
+      $textContent = $(textContent);
+    },
 
-    // Don't move scroll when enter key is pressed
-    if (e.keyCode === 32) {
-      e.preventDefault();
-      e.stopPropagation();
-      return;
-    }
+    setToggleModeButton: function(button) {
+      $toggleModeButton = $(button);
+    },
 
-    // Paint a color
-    paintGradient(e.keyCode + '');
-    i += size;
+    setTextButton: function(button) {
+      $textButton = $(button);
+    },
 
-    if (i >= $canvas[0].width) {
-      j++;
+    setSquareSize: function(newSize) {
+      squareSize = newSize;
+    },
+
+    getSize: function() {
+      return squareSize;
+    },
+
+    setCanvasWidth: function(width) {
+      canvasWidth = width;
+    },
+
+    setCanvasHeight: function(height) {
+      canvasHeight = height;
+    },
+
+    incrementX: function() {
+      i += squareSize;
+      return i;
+    },
+
+    decrementX: function() {
+      i -= squareSize;
+      return i;
+    },
+
+    resetX: function() {
       i = 0;
+      return i;
+    },
+
+    getX: function() {
+      return i;
+    },
+
+    incrementY: function() {
+      j++;
+      return j;
+    },
+
+    decrementY: function() {
+      j--;
+      return j;
+    },
+
+    resetY: function() {
+      j = 0;
+      return j;
+    },
+
+    getY: function() {
+      return j;
+    },
+
+    addNewLine: function() {
+      this.incrementY();
+      this.resetX();
+    },
+
+    paintSquare: function(keyCode) {
+      
+    },
+
+    paintGradientSquare: function(context, keyCode) {
+      context.beginPath();
+      var grd = context.createLinearGradient(i, 0, i + squareSize, 0);
+      grd.addColorStop(0, gradientColors[keyCode][0]);
+      grd.addColorStop(1, gradientColors[keyCode][1]);
+      context.fillStyle = grd;
+      context.fillRect(i, squareSize * j, squareSize, squareSize);
+    },
+
+    addCharacter: function(charCode) {
+      $textContent.get(0).innerText += String.fromCharCode(charCode);
+    },
+
+    setMode: function(mode) {
+      if (mode === TEXT) {
+        $textButton.addClass('invisible');
+        $canvas.addClass('invisible');
+        $textContent.removeClass('invisible');
+        $textContent.focus();
+        enabledMode = TEXT;
+      }
+      else {
+        $textButton.removeClass('invisible');
+        $canvas.removeClass('invisible');
+        $textContent.addClass('invisible');
+        enabledMode = COLORS;
+      }
+    },
+
+    getEnabledMode: function() {
+      return enabledMode;
+    },
+
+    keyDownHandler: function(e) {
+
+      // Don't move scroll when enter key is pressed
+      if (e.keyCode === 32) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
+      // Paint a squared color
+      this.paintGradientSquare(context, e.keyCode + '');
+      this.incrementX();
+
+      // If the horizontal limit of the canvas is reached, add a new line
+      if (i >= canvasWidth) {
+        this.addNewLine();
+      }
+    },
+
+    keyPressHandler: function(e) {
+      if (enabledMode === COLORS) {
+        this.addCharacter(e.which);
+      }
+    },
+
+    mouseDownHandler: function(e) {
+
+      // Avoid selecting content
+      e.preventDefault();
+    },
+
+    toggleButtonClickHandler: function() {
+      if (enabledMode === TEXT) {
+        this.setMode(COLORS);
+      }
+      else {
+        this.setMode(TEXT);
+      }
     }
+  };
+
+}(jQuery));
+
+(function(window, $, TypingColors) {
+
+  'use strict';
+
+  var $canvas = $('canvas');
+  var $window = $(window);
+  var $toggleModeButton = $('#toggle');
+
+  // Initialize width and height
+  $canvas[0].width = $window.width();
+  $canvas[0].height = $window.height();
+
+  [$('html'), $('body'), $('canvas')].forEach(function($element) {
+    $element.css('width', $window.width() + 'px');
+    $element.css('height', $window.height() + 'px');
   });
 
-  // The correct lowercase or uppercase value is returned for keypress events
-  $(window).on('keypress', function(e) {
-    if (enabledMode === COLORS) {
-      addChar(e.which);
-    }
-  });
+  // Initialize TypingColors
+  TypingColors.setCanvas($canvas[0]);
+  TypingColors.setCanvasWidth($canvas.width());
+  TypingColors.setCanvasHeight($canvas.height());
+  TypingColors.setSquareSize(40);
+  TypingColors.setTextButton($('#change-to-text')[0]);
+  TypingColors.setTextContent($('#text-content')[0]);
+  TypingColors.setToggleModeButton($toggleModeButton[0]);
 
-}(window, document, jQuery));
+  // Listen events
+  $window.on('keydown', TypingColors.keyDownHandler.bind(TypingColors));
+  $window.on('keypress', TypingColors.keyPressHandler.bind(TypingColors));
+  $toggleModeButton.on('click', TypingColors.toggleButtonClickHandler.bind(TypingColors));
+  $toggleModeButton.on('mousedown', TypingColors.mouseDownHandler.bind(TypingColors));
+
+}(window, jQuery, TypingColors));
+
+
