@@ -165,7 +165,11 @@ var TypingColors = (function($) {
       context.fillRect(i, squareSize * j, squareSize, squareSize);
     },
 
-    addCharacter: function(charCode) {
+    addCharacter: function(character) {
+      $textContent.get(0).innerText += character;
+    },
+
+    addCharacterByCharCode: function(charCode) {
       $textContent.get(0).innerText += String.fromCharCode(charCode);
     },
 
@@ -190,11 +194,24 @@ var TypingColors = (function($) {
     },
 
     keyDownHandler: function(e) {
+      
+      console.log(e.keyCode);
 
-      // Don't move scroll when enter key is pressed
+      // Don't move scroll when space key is pressed
       if (e.keyCode === 32) {
         e.preventDefault();
         e.stopPropagation();
+        
+        if (enabledMode === COLORS) {
+          this.addCharacter(' ');
+        }
+
+        return;
+      }
+      
+      // Add a new line when the enter key is pressed
+      if (e.keyCode === 13) {
+        this.addNewLine();
         return;
       }
 
@@ -210,7 +227,7 @@ var TypingColors = (function($) {
 
     keyPressHandler: function(e) {
       if (enabledMode === COLORS) {
-        this.addCharacter(e.which);
+        this.addCharacterByCharCode(e.which);
       }
     },
 
