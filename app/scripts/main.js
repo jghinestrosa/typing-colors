@@ -165,12 +165,22 @@ var TypingColors = (function($) {
       context.fillRect(i, squareSize * j, squareSize, squareSize);
     },
 
+    removeLastSquare: function(context) {
+      context.clearRect(i - squareSize, squareSize * j, squareSize, squareSize);
+      this.decrementX();
+    },
+
     addCharacter: function(character) {
       $textContent.get(0).innerText += character;
     },
 
     addCharacterByCharCode: function(charCode) {
       $textContent.get(0).innerText += String.fromCharCode(charCode);
+    },
+
+    removeLastCharacter: function() {
+      var oldText = $textContent.get(0).innerText;
+      $textContent.get(0).innerText = oldText.substring(0, oldText.length - 1);
     },
 
     setMode: function(mode) {
@@ -195,15 +205,28 @@ var TypingColors = (function($) {
 
     keyDownHandler: function(e) {
       
-      console.log(e.keyCode);
+      //console.log(e.keyCode);
 
-      // Don't move scroll when space key is pressed
       if (e.keyCode === 32) {
+
+        // Don't move scroll when space key is pressed
         e.preventDefault();
         e.stopPropagation();
         
+        // Add an space character
         if (enabledMode === COLORS) {
           this.addCharacter(' ');
+        }
+
+        return;
+      }
+
+      // Remove last square when the backspace key is pressed
+      if (e.keyCode === 8) {
+        this.removeLastSquare(context);
+
+        if (enabledMode === COLORS) {
+          this.removeLastCharacter();
         }
 
         return;
