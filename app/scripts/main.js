@@ -83,6 +83,7 @@ var TypingColors = (function($) {
 
     setTextContent: function(textContent) {
       $textContent = $(textContent);
+      $textContent.get(0).textContent = '';
     },
 
     setToggleModeButton: function(button) {
@@ -171,16 +172,17 @@ var TypingColors = (function($) {
     },
 
     addCharacter: function(character) {
-      $textContent.get(0).innerText += character;
+      $textContent.get(0).textContent += character;
     },
 
     addCharacterByCharCode: function(charCode) {
-      $textContent.get(0).innerText += String.fromCharCode(charCode);
+      var character = String.fromCharCode(charCode);
+      $textContent.get(0).textContent += character;
     },
 
     removeLastCharacter: function() {
-      var oldText = $textContent.get(0).innerText;
-      $textContent.get(0).innerText = oldText.substring(0, oldText.length - 1);
+      var oldText = $textContent.get(0).textContent;
+      $textContent.get(0).textContent = oldText.substring(0, oldText.length - 1);
     },
 
     setMode: function(mode) {
@@ -209,12 +211,13 @@ var TypingColors = (function($) {
 
       if (e.keyCode === 32) {
 
-        // Don't move scroll when space key is pressed
-        e.preventDefault();
-        e.stopPropagation();
-        
         // Add an space character
         if (enabledMode === COLORS) {
+
+          // Don't move scroll when space key is pressed
+          e.preventDefault();
+          e.stopPropagation();
+
           this.addCharacter(' ');
         }
 
