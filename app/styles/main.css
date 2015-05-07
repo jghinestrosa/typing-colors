@@ -127,6 +127,7 @@
   background: white;
   z-index: 9999;
   text-align: center;
+  border-radius: 10px;
 
   transition-property: top;
   transition-duration: 0.4s;
@@ -135,7 +136,7 @@
 }
 
 #keyboard-panel.hide {
-  top: -255px;
+  top: -300px;
 }
 
 .keyboard-rows {
