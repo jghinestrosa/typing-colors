@@ -1,4 +1,4 @@
-var TypingColors = (function($) {
+﻿var TypingColors = (function($) {
   'use strict';
 
   // Elements to show colors and text
