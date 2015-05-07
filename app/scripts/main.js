@@ -9,6 +9,10 @@ var TypingColors = (function($) {
   // Buttons
   var $toggleModeButton;
   var $textButton;
+  var $showKeyboardButton;
+
+  // Dark background div
+  var $darkBackground;
 
   // Canvas position indexes for painting
   var i = 0;
@@ -94,8 +98,16 @@ var TypingColors = (function($) {
       $textButton = $(button);
     },
 
+    setShowKeyboardButton: function(showKeyboardButton) {
+      $showKeyboardButton = $(showKeyboardButton);
+    },
+
     setSquareSize: function(newSize) {
       squareSize = newSize;
+    },
+    
+    setDarkBackground: function(darkBackground) {
+      $darkBackground = $(darkBackground);
     },
 
     getSize: function() {
@@ -143,7 +155,7 @@ var TypingColors = (function($) {
       j = 0;
       return j;
     },
-
+    
     getY: function() {
       return j;
     },
@@ -270,6 +282,24 @@ var TypingColors = (function($) {
       else {
         this.setMode(TEXT);
       }
+    },
+
+    showKeyboardButtonClickHandler: function() {
+      $darkBackground.show();
+
+      // Hack for some browsers
+      setTimeout(function() {
+        $darkBackground.css('opacity', '0.3');
+      }, 50);
+    },
+
+    darkBackgroundClickHandler: function() {
+      $darkBackground.on('transitionend webkitTransitionEnd', function() {
+        $darkBackground.hide();
+        $darkBackground.off('transitionend webkitTransitionEnd');
+      });
+
+      $darkBackground.css('opacity', '0');
     }
   };
 
@@ -282,6 +312,8 @@ var TypingColors = (function($) {
   var $canvas = $('canvas');
   var $window = $(window);
   var $toggleModeButton = $('#toggle');
+  var $showKeyboardButton = $('#show-keyboard');
+  var $darkBackground = $('#dark-background');
 
   // Initialize width and height
   $canvas[0].width = $window.width();
@@ -299,13 +331,18 @@ var TypingColors = (function($) {
   TypingColors.setSquareSize(40);
   TypingColors.setTextButton($('#change-to-text')[0]);
   TypingColors.setTextContent($('#text-content')[0]);
+  TypingColors.setDarkBackground($('#dark-background')[0]);
   TypingColors.setToggleModeButton($toggleModeButton[0]);
+  TypingColors.setShowKeyboardButton($showKeyboardButton[0]);
 
+  // TODO: Change this to an initialize method of TypingColors
   // Listen events
   $window.on('keydown', TypingColors.keyDownHandler.bind(TypingColors));
   $window.on('keypress', TypingColors.keyPressHandler.bind(TypingColors));
   $toggleModeButton.on('click', TypingColors.toggleButtonClickHandler.bind(TypingColors));
   $toggleModeButton.on('mousedown', TypingColors.mouseDownHandler.bind(TypingColors));
+  $showKeyboardButton.on('click', TypingColors.showKeyboardButtonClickHandler.bind(TypingColors));
+  $darkBackground.on('click', TypingColors.darkBackgroundClickHandler.bind(TypingColors));
 
 }(window, jQuery, TypingColors));
 
