@@ -64,6 +64,15 @@ html, body, canvas, #text-content {
   margin-bottom: 15px;
   width: 70px;
   height: 70px;
+  display: table;
+}
+
+#show-keyboard span {
+  width: 100%;
+  height: 100%;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .invisible {
