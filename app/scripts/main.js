@@ -14,6 +14,9 @@ var TypingColors = (function($) {
   // Dark background div
   var $darkBackground;
 
+  // Keyboard panel
+  var $keyboardPanel;
+
   // Canvas position indexes for painting
   var i = 0;
   var j = 0;
@@ -108,6 +111,10 @@ var TypingColors = (function($) {
     
     setDarkBackground: function(darkBackground) {
       $darkBackground = $(darkBackground);
+    },
+
+    setKeyboardPanel: function(keyboardPanel) {
+      $keyboardPanel = $(keyboardPanel);
     },
 
     getSize: function() {
@@ -286,10 +293,14 @@ var TypingColors = (function($) {
 
     showKeyboardButtonClickHandler: function() {
       $darkBackground.show();
+      $keyboardPanel.parent().show();
 
       // Hack for some browsers
       setTimeout(function() {
-        $darkBackground.css('opacity', '0.3');
+      
+        // Show dark background and keyboard panel config
+        $darkBackground.removeClass('hide');
+        $keyboardPanel.removeClass('hide');
       }, 50);
     },
 
@@ -299,7 +310,14 @@ var TypingColors = (function($) {
         $darkBackground.off('transitionend webkitTransitionEnd');
       });
 
-      $darkBackground.css('opacity', '0');
+      $keyboardPanel.on('transitionend webkitTransitionEnd', function() {
+        $keyboardPanel.parent().hide();
+        $keyboardPanel.off('transitionend webkitTransitionEnd');
+      });
+
+      // Hide dark background and keyboard panel config
+      $darkBackground.addClass('hide');
+      $keyboardPanel.addClass('hide');
     }
   };
 
@@ -332,6 +350,7 @@ var TypingColors = (function($) {
   TypingColors.setTextButton($('#change-to-text')[0]);
   TypingColors.setTextContent($('#text-content')[0]);
   TypingColors.setDarkBackground($('#dark-background')[0]);
+  TypingColors.setKeyboardPanel($('#keyboard-panel')[0]);
   TypingColors.setToggleModeButton($toggleModeButton[0]);
   TypingColors.setShowKeyboardButton($showKeyboardButton[0]);
 

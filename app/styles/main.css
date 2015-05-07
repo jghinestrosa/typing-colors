@@ -93,10 +93,44 @@ html, body, canvas, #text-content {
   width: 100%;
   height: 100%;
   background: #000000;
-  opacity: 0.0;
+  opacity: 0.2;
   z-index: 9999;
 
   transition-property: opacity;
   transition-duration: 0.5s;
   transition-timing-function: ease-in;
+}
+
+#dark-background.hide {
+  opacity: 0;
+}
+
+#keyboard-panel-wrapper {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#keyboard-panel {
+  position: relative;
+  top: 0;
+  width: 500px;
+  height: 250px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid black;
+  background: white;
+  z-index: 9999;
+
+  transition-property: top;
+  transition-duration: 0.4s;
+  transition-timing-function: ease-out;
+  transition-delay: 0.1s;
+}
+
+#keyboard-panel.hide {
+  top: -255px;
 }
